@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unificar Planilhas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Unificar Planilhas Excel</h1>
+    <input type="file" id="fileInput" multiple>
+    <button onclick="unificarPlanilhas()">Unificar</button>
+    <script>
+        function unificarPlanilhas() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            if (files.length === 0) {
+                alert("Por favor, selecione pelo menos um arquivo.");
+                return;
+            }
+
+            const workbook = XLSX.utils.book_new();
+            const allData = [];
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbookTemp = XLSX.read(data, {type: 'array'});
+                    workbookTemp.SheetNames.forEach(sheetName => {
+                        const worksheet = workbookTemp.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                        allData.push(...jsonData);
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            });
+
+            setTimeout(() => {
+                const worksheet = XLSX.utils.aoa_to_sheet(allData);
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Unificado");
+
+                XLSX.writeFile(workbook, 'planilhas_unificadas.xlsx');
+                alert("Planilhas unificadas com sucesso!");
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

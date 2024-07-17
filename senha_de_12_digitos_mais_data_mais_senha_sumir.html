@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Senha Aleatória com Data</title>
+<script>
+function gerarSenha() {
+    var caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var senha = '';
+    var comprimentoSenha = 12;
+    
+    // Gerar a parte aleatória da senha
+    for (var i = 0; i < comprimentoSenha; i++) {
+        var randomIndex = Math.floor(Math.random() * caracteres.length);
+        senha += caracteres[randomIndex];
+    }
+    
+    // Obter a data atual no formato DDMMYYYY
+    var dataAtual = new Date();
+    var dia = ('0' + dataAtual.getDate()).slice(-2);
+    var mes = ('0' + (dataAtual.getMonth() + 1)).slice(-2);
+    var ano = dataAtual.getFullYear();
+    var dataFormatada = dia + mes + ano;
+    
+    // Combinar a parte aleatória com a data atual
+    senha += dataFormatada;
+    
+    // Exibir a senha gerada
+    var senhaGeradaElement = document.getElementById('senha-gerada');
+    senhaGeradaElement.innerText = senha;
+    
+    // Agendar a remoção da senha após 5 segundos
+    setTimeout(function() {
+        senhaGeradaElement.innerText = '';
+    }, 5000); // 5000 milissegundos = 5 segundos
+}
+</script>
+</head>
+<body>
+    <h2>Gerador de Senha Aleatória com Data</h2>
+    <button onclick="gerarSenha()">Gerar Senha</button>
+    <p>Senha gerada: <span id="senha-gerada"></span></p>
+</body>
+</html>
